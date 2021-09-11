@@ -1,0 +1,28 @@
+body {
+	font: 24px sans-serif;
+	margin: 20px;
+}
+
+.grid-row:after {
+	clear: both;
+	content: "";
+	display: table;
+}
+
+.cell {
+	border: 1px solid #aaa;
+	float: left;
+	height: 16px;
+    width: 16px;
+	margin-right: -1px;
+	margin-top: -1px;
+	padding: 0;
+}
+
+.cell.live {
+    background: #000;
+}
+
+.cell.dead {
+    background: #fff;
+}
