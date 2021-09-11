@@ -11,7 +11,7 @@ function Cell(props) {
 		class_name += "dead";
 	}
 
-	return <button className={class_name} onClick={ props.onClick } />;
+	return <button className={class_name} onClick={props.onClick} />;
 }
 
 // The cell grid
@@ -35,9 +35,9 @@ class Grid extends React.Component {
 	}
 }
 
-// A button that simulates a single generation when clicked
-function ButtonStep(props) {
-	return <button className="control" onClick={ props.onClick } />
+// A button that controls the game
+function Controller(props) {
+	return <img className="icon" src={"icons/" + props.image} onClick={props.onClick}/>;
 }
 
 // The game board
@@ -45,8 +45,8 @@ class Game extends React.Component {
 	constructor(props) {
 		super(props);
 
-		this.width = 32;
-		this.height = 32;
+		this.width = 128;
+		this.height = 64;
 
 		this.state = {
 			generation: 0,
@@ -109,12 +109,44 @@ class Game extends React.Component {
 		})
 	}
 
+	// Run simulations periodically
+	play() {
+
+	}
+
+	// Stop playing simulations
+	stop() {
+
+	}
+
+	// Rewind one generation
+	rewind() {
+		this.stop();
+	}
+
+	// Return to original generation
+	restart() {
+		this.stop();
+	}
+
+	// Reset the entire grid
+	reset() {
+		this.stop();
+	}
+
 	render() {
 		// Display the grid and controls
 		return (
 			<div className="game">
 				<div className="grid"><Grid width={this.width} height={this.height} cells={this.state.cells} onClick={(i)=>this.handleClick(i)}/></div>
-				<div className="control-bar"><ButtonStep onClick={()=>this.simulate()} /></div>
+				<div className="control-bar">
+					<Controller image="fast-backward-solid.svg" onClick={()=>this.restart()} />
+					<Controller image="step-backward-solid.svg" onClick={()=>this.rewind()} />
+					<Controller image="pause-solid.svg" onClick={()=>this.stop()} />
+					<Controller image="play-solid.svg" onClick={()=>this.play()} />
+					<Controller image="step-forward-solid.svg" onClick={()=>this.simulate()} />
+					<Controller image="redo-alt-solid.svg" onClick={()=>this.reset()} />
+				</div>
 			</div>
 		);
 	}
