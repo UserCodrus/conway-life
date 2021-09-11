@@ -8,11 +8,7 @@ body {
 	flex-direction: column;
 }
 
-.controls {
-	margin: 0 auto;
-
-	border: 4px solid #f00; /* debug border */
-}
+/* Cell grid */
 
 .grid {
 	margin: 0 auto;
@@ -46,4 +42,22 @@ body {
 
 .cell:hover {
 	border: 3px solid #99f;
+}
+
+/* Control bar */
+
+.control-bar {
+	margin: 0 auto;
+
+	border: 4px solid #f00; /* debug border */
+}
+
+button.control {
+	border: 1px solid #aaa;
+	float: left;
+	height: 16px;
+	width: 16px;
+	margin-right: -1px;
+	margin-top: -1px;
+	padding: 0;
 }
