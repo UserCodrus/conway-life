@@ -50,21 +50,39 @@ class Game extends React.Component {
 
 		this.state = {
 			generation: 0,
-			cells: Array(this.width * this.height).fill(false)
+			history: [{
+				cells: Array(this.width * this.height).fill(false)
+			}]
 		}
 	}
 
-	// Invert cell data at the given grid index
+	// Change cell data at the given grid index
 	handleClick(i) {
-		const cell_data = this.state.cells.slice();
+		const cell_data = this.state.history[this.state.generation].cells.slice();
 		cell_data[i] = !cell_data[i];
-		this.setState({cells: cell_data});
+
+		this.setState({
+			generation: 0,
+			history: [{
+				cells: cell_data
+			}]
+		});
 	}
 
 	// Process a single generation
 	simulate() {
+		// Make sure we haven't simulated farther than the current display
+		const history = this.state.history;
+		if (history.length > this.state.generation+1) {
+			this.setState({
+				generation: ++this.state.generation
+			});
+			return;
+		}
+
 		// Update grid cells
-		let new_population = this.state.cells.slice();
+		const cells = history[this.state.generation].cells;
+		let new_population = cells.slice();
 		for (let y = 0; y < this.height; ++y) {
 			for (let x = 0; x < this.width; ++x) {
 
@@ -78,7 +96,7 @@ class Game extends React.Component {
 							const ix = x + i;
 							const iy = y + j;
 							if (ix > 0 && ix < this.width && iy > 0 && iy < this.height) {
-								if (this.state.cells[iy * this.width + ix]) {
+								if (cells[iy * this.width + ix]) {
 									neighbors++;
 								}
 							}
@@ -88,7 +106,7 @@ class Game extends React.Component {
 
 				// Change cell state based on the number of neighbors
 				const idx = y * this.width + x;
-				if (this.state.cells[idx] === true) {
+				if (cells[idx] === true) {
 					// Kill live cells with less than two or more than three neighbors
 					if (neighbors < 2 || neighbors > 3) {
 						new_population[idx] = false;
@@ -104,8 +122,10 @@ class Game extends React.Component {
 
 		// Save the new state
 		this.setState({
-			generation: this.state.generation++,
-			cells: new_population
+			generation: ++this.state.generation,
+			history: history.concat([{
+				cells: new_population
+			}])
 		})
 	}
 
@@ -122,23 +142,38 @@ class Game extends React.Component {
 	// Rewind one generation
 	rewind() {
 		this.stop();
+		if (this.state.generation > 0) {
+			this.setState({
+				generation: --this.state.generation
+			})
+		}
 	}
 
 	// Return to original generation
 	restart() {
 		this.stop();
+		this.setState({
+			generation: 0
+		})
 	}
 
 	// Reset the entire grid
 	reset() {
 		this.stop();
+		this.setState({
+			generation: 0,
+			history: [{
+				cells: Array(this.width * this.height).fill(false)
+			}]
+		})
 	}
 
 	render() {
 		// Display the grid and controls
+		const current_generation = this.state.history[this.state.generation].cells;
 		return (
 			<div className="game">
-				<div className="grid"><Grid width={this.width} height={this.height} cells={this.state.cells} onClick={(i)=>this.handleClick(i)}/></div>
+				<div className="grid"><Grid width={this.width} height={this.height} cells={current_generation} onClick={(i)=>this.handleClick(i)}/></div>
 				<div className="control-bar">
 					<Controller image="fast-backward-solid.svg" onClick={()=>this.restart()} />
 					<Controller image="step-backward-solid.svg" onClick={()=>this.rewind()} />
@@ -147,6 +182,7 @@ class Game extends React.Component {
 					<Controller image="step-forward-solid.svg" onClick={()=>this.simulate()} />
 					<Controller image="redo-alt-solid.svg" onClick={()=>this.reset()} />
 				</div>
+				<div className="generation">{this.state.generation}</div>
 			</div>
 		);
 	}

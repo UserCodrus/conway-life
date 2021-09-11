@@ -63,3 +63,11 @@ body {
 .icon:hover {
 	filter: invert(47%) sepia(93%) saturate(2120%) hue-rotate(174deg) brightness(98%) contrast(112%);
 }
+
+/* Generation display */
+
+.generation {
+	margin: 0 auto;
+
+	/*border: 4px solid #f00; /* debug border */
+}
