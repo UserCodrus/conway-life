@@ -48,16 +48,23 @@ class Game extends React.Component {
 		this.width = 128;
 		this.height = 64;
 
+		this.interval = 200;
+		this.timer = null;
+
 		this.state = {
 			generation: 0,
 			history: [{
 				cells: Array(this.width * this.height).fill(false)
 			}]
 		}
+
+		this.simulate = this.simulate.bind(this);
 	}
 
 	// Change cell data at the given grid index
 	handleClick(i) {
+		this.stop();
+
 		const cell_data = this.state.history[this.state.generation].cells.slice();
 		cell_data[i] = !cell_data[i];
 
@@ -131,12 +138,12 @@ class Game extends React.Component {
 
 	// Run simulations periodically
 	play() {
-
+		this.timer = setInterval(this.simulate, this.interval);
 	}
 
 	// Stop playing simulations
 	stop() {
-
+		clearInterval(this.timer);
 	}
 
 	// Rewind one generation
